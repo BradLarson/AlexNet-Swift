@@ -1,4 +1,5 @@
 import TensorFlow
+import Foundation
 
 // Assumes 227x227 input size
 public struct AlexNet: Layer {
@@ -39,6 +40,10 @@ public struct AlexNet: Layer {
         self.drop7 = Dropout<Float>(probability: 0.5, learningPhaseIndicator: learningPhaseIndicator)
         self.fc8 = Dense(inputSize: fullyConnectedWidth, outputSize: classCount, activation: { $0 } )
     }
+    
+    public func loadInitialWeights(from directory: URL) {
+        // TODO: Complete this
+    }
 
     @differentiable(wrt: (self, input))
     public func applied(to input: Tensor<Float>) -> Tensor<Float> {
@@ -67,5 +72,6 @@ public struct AlexNet: Layer {
 func loss(model: AlexNet, images: Tensor<Float>, labels: Tensor<Int32>) -> Tensor<Float> {
     let logits = model.applied(to: images)
     let oneHotLabels = Tensor<Float>(oneHotAtIndices: labels, depth: logits.shape[1])
-    return softmaxCrossEntropy(logits: logits, labels: oneHotLabels)
+    let crossEntropyLoss = softmaxCrossEntropy(logits: logits, labels: oneHotLabels)
+    return crossEntropyLoss
 }

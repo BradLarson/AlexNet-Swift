@@ -1,6 +1,9 @@
 import TensorFlow
 import Foundation
 
+// TODO: Take in image directory
+// TODO: Take in pretrained weights directory
+
 let batchSize: Int32 = 128
 let classCount = 1000
 
@@ -15,11 +18,13 @@ print("Start of training process")
 
 let startTime = NSDate()
 for batchNumber in 0..<5 {
-    let gradients = gradient(at: alexNet) { model in
-        loss(model: model, images: fakeImageBatch, labels: fakeLabelBatch)
+    var currentLoss = Tensor<Float>(zeros: [1])
+    let gradients = gradient(at: alexNet) { model -> Tensor<Float> in
+        currentLoss = loss(model: model, images: fakeImageBatch, labels: fakeLabelBatch)
+        return currentLoss
     }
     optimizer.update(&alexNet.allDifferentiableVariables, along: gradients)
-    print("Completed batch \(batchNumber)")
+    print("Completed batch \(batchNumber), loss: \(currentLoss)")
 }
 let endTime = -startTime.timeIntervalSinceNow
 
