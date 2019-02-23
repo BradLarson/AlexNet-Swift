@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BC0498042220D7D000270889 /* WeightLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0498032220D7D000270889 /* WeightLoading.swift */; };
+		BC0498082221A76900270889 /* Accuracy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0498072221A76900270889 /* Accuracy.swift */; };
+		BC04986A2221C4D900270889 /* weights in CopyFiles */ = {isa = PBXBuildFile; fileRef = BC0498692221C4D900270889 /* weights */; };
+		BC04986C2221C4EA00270889 /* images in CopyFiles */ = {isa = PBXBuildFile; fileRef = BC04986B2221C4EA00270889 /* images */; };
+		BC0498752221E88E00270889 /* ImageDataset.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0498742221E88E00270889 /* ImageDataset.swift */; };
 		BC236339221C6EAB00C20FE4 /* AlexNet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA444E2221B686000C440F9 /* AlexNet.swift */; };
 		BC23633B221CC07200C20FE4 /* LRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23633A221CC07200C20FE4 /* LRN.swift */; };
 		BCA444DC221B678100C440F9 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA444DB221B678100C440F9 /* main.swift */; };
@@ -17,16 +22,23 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		BCA444D6221B678100C440F9 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 16;
 			files = (
+				BC04986C2221C4EA00270889 /* images in CopyFiles */,
+				BC04986A2221C4D900270889 /* weights in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BC0498032220D7D000270889 /* WeightLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightLoading.swift; sourceTree = "<group>"; };
+		BC0498072221A76900270889 /* Accuracy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accuracy.swift; sourceTree = "<group>"; };
+		BC0498692221C4D900270889 /* weights */ = {isa = PBXFileReference; lastKnownFileType = folder; path = weights; sourceTree = "<group>"; };
+		BC04986B2221C4EA00270889 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
+		BC0498742221E88E00270889 /* ImageDataset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataset.swift; sourceTree = "<group>"; };
 		BC23633A221CC07200C20FE4 /* LRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRN.swift; sourceTree = "<group>"; };
 		BCA444D8221B678100C440F9 /* AlexNet-Swift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "AlexNet-Swift"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCA444DB221B678100C440F9 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -52,6 +64,8 @@
 			isa = PBXGroup;
 			children = (
 				BCA444DA221B678100C440F9 /* AlexNet */,
+				BC0498692221C4D900270889 /* weights */,
+				BC04986B2221C4EA00270889 /* images */,
 				BCA444D9221B678100C440F9 /* Products */,
 				BCA444E4221B68B100C440F9 /* Frameworks */,
 			);
@@ -68,9 +82,12 @@
 		BCA444DA221B678100C440F9 /* AlexNet */ = {
 			isa = PBXGroup;
 			children = (
-				BC23633A221CC07200C20FE4 /* LRN.swift */,
-				BCA444E2221B686000C440F9 /* AlexNet.swift */,
 				BCA444DB221B678100C440F9 /* main.swift */,
+				BCA444E2221B686000C440F9 /* AlexNet.swift */,
+				BC23633A221CC07200C20FE4 /* LRN.swift */,
+				BC0498032220D7D000270889 /* WeightLoading.swift */,
+				BC0498072221A76900270889 /* Accuracy.swift */,
+				BC0498742221E88E00270889 /* ImageDataset.swift */,
 			);
 			path = AlexNet;
 			sourceTree = "<group>";
@@ -141,9 +158,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC0498752221E88E00270889 /* ImageDataset.swift in Sources */,
+				BC0498042220D7D000270889 /* WeightLoading.swift in Sources */,
 				BC23633B221CC07200C20FE4 /* LRN.swift in Sources */,
 				BCA444DC221B678100C440F9 /* main.swift in Sources */,
 				BC236339221C6EAB00C20FE4 /* AlexNet.swift in Sources */,
+				BC0498082221A76900270889 /* Accuracy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

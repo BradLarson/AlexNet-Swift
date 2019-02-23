@@ -19,19 +19,59 @@ public struct AlexNet: Layer {
     let drop7: Dropout<Float>
     var fc8: Dense<Float>
     
-//    let fullyConnectedWidth = 4096
+//    @noDerivative let fullyConnectedWidth = 4096
     @noDerivative let fullyConnectedWidth = 256
+//    @noDerivative let fullyConnectedWidth = 16
 
-    public init(classCount: Int, learningPhaseIndicator: LearningPhaseIndicator) {
-        self.conv1 = Conv2D(filterShape: (11, 11, 3, 96), strides: (4, 4), padding: .valid)
+    public init(classCount: Int, learningPhaseIndicator: LearningPhaseIndicator, weightDirectory: URL? = nil) throws {
+        if let directory = weightDirectory {
+            // Load pretrained convolutional weights
+            let conv1Weights = try loadWeights(from: "conv1.weights", directory: directory, filterShape: (11, 11, 3, 96))
+            let conv1Bias = try loadBiases(from: "conv1.biases", directory: directory)
+  
+            // Why can't I use this initializer?
+//            self.conv1 = Conv2D<Float>(filter: conv1Weights, bias: conv1Bias, strides: (Int32(4), Int32(4)), padding: .valid)
+            self.conv1 = Conv2D(filterShape: (11, 11, 3, 96), strides: (4, 4), padding: .valid)
+            self.conv1.filter = conv1Weights
+            self.conv1.bias = conv1Bias
+
+            var kernelString = ""
+            for yIndex in 0..<11 {
+                for xIndex in 0..<11 {
+                    kernelString += "\(self.conv1.filter[Int32(yIndex), Int32(xIndex), 0, 0]),"
+                }
+
+                kernelString += "\n"
+            }
+            print("Kernel: \n\(kernelString)")
+            print("Bias: \(self.conv1.bias)")
+            
+            let conv2Weights = try loadWeights(from: "conv2.weights", directory: directory, filterShape: (5, 5, 96, 256))
+            let conv2Bias = try loadBiases(from: "conv2.biases", directory: directory)
+            let conv3Weights = try loadWeights(from: "conv3.weights", directory: directory, filterShape: (3, 3, 256, 384))
+            let conv3Bias = try loadBiases(from: "conv3.biases", directory: directory)
+            let conv4Weights = try loadWeights(from: "conv4.weights", directory: directory, filterShape: (3, 3, 384, 384))
+            let conv4Bias = try loadBiases(from: "conv4.biases", directory: directory)
+            let conv5Weights = try loadWeights(from: "conv5.weights", directory: directory, filterShape: (3, 3, 384, 256))
+            let conv5Bias = try loadBiases(from: "conv5.biases", directory: directory)
+
+            self.conv2 = Conv2D(filterShape: (5, 5, 96, 256), strides: (1, 1), padding: .same)
+            self.conv3 = Conv2D(filterShape: (3, 3, 256, 384), strides: (1, 1), padding: .same)
+            self.conv4 = Conv2D(filterShape: (3, 3, 384, 384), strides: (1, 1), padding: .same)
+            self.conv5 = Conv2D(filterShape: (3, 3, 384, 256), strides: (1, 1), padding: .same)
+        } else {
+            // Random initialization
+            self.conv1 = Conv2D(filterShape: (11, 11, 3, 96), strides: (4, 4), padding: .valid)
+            self.conv2 = Conv2D(filterShape: (5, 5, 96, 256), strides: (1, 1), padding: .same)
+            self.conv3 = Conv2D(filterShape: (3, 3, 256, 384), strides: (1, 1), padding: .same)
+            self.conv4 = Conv2D(filterShape: (3, 3, 384, 384), strides: (1, 1), padding: .same)
+            self.conv5 = Conv2D(filterShape: (3, 3, 384, 256), strides: (1, 1), padding: .same)
+        }
+        
         self.norm1 = LRN(depthRadius: 5, bias: 1.0, alpha: 0.0001, beta: 0.75)
         self.pool1 = MaxPool2D(poolSize: (3, 3), strides: (2, 2), padding: .valid)
-        self.conv2 = Conv2D(filterShape: (5, 5, 96, 256), strides: (1, 1), padding: .same)
         self.norm2 = LRN(depthRadius: 5, bias: 1.0, alpha: 0.0001, beta: 0.75)
         self.pool2 = MaxPool2D(poolSize: (3, 3), strides: (2, 2), padding: .valid)
-        self.conv3 = Conv2D(filterShape: (3, 3, 256, 384), strides: (1, 1), padding: .same)
-        self.conv4 = Conv2D(filterShape: (3, 3, 384, 384), strides: (1, 1), padding: .same)
-        self.conv5 = Conv2D(filterShape: (3, 3, 384, 256), strides: (1, 1), padding: .same)
         self.pool5 = MaxPool2D(poolSize: (3, 3), strides: (2, 2), padding: .valid)
 
         self.fc6 = Dense(inputSize: 9216, outputSize: fullyConnectedWidth, activation: relu) // 6 * 6 * 256 on input
@@ -41,10 +81,6 @@ public struct AlexNet: Layer {
         self.fc8 = Dense(inputSize: fullyConnectedWidth, outputSize: classCount, activation: { $0 } )
     }
     
-    public func loadInitialWeights(from directory: URL) {
-        // TODO: Complete this
-    }
-
     @differentiable(wrt: (self, input))
     public func applied(to input: Tensor<Float>) -> Tensor<Float> {
         let conv1Result = relu(conv1.applied(to: input))
