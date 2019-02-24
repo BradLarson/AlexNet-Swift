@@ -26,39 +26,38 @@ public struct AlexNet: Layer {
     public init(classCount: Int, learningPhaseIndicator: LearningPhaseIndicator, weightDirectory: URL? = nil) throws {
         if let directory = weightDirectory {
             // Load pretrained convolutional weights
-            let conv1Weights = try loadWeights(from: "conv1.weights", directory: directory, filterShape: (11, 11, 3, 96))
-            let conv1Bias = try loadBiases(from: "conv1.biases", directory: directory)
   
             // Why can't I use this initializer?
 //            self.conv1 = Conv2D<Float>(filter: conv1Weights, bias: conv1Bias, strides: (Int32(4), Int32(4)), padding: .valid)
             self.conv1 = Conv2D(filterShape: (11, 11, 3, 96), strides: (4, 4), padding: .valid)
+            let conv1Weights = try loadWeights(from: "conv1.weights", directory: directory, filterShape: (11, 11, 3, 96))
+            let conv1Bias = try loadBiases(from: "conv1.biases", directory: directory)
             self.conv1.filter = conv1Weights
             self.conv1.bias = conv1Bias
-
-            var kernelString = ""
-            for yIndex in 0..<11 {
-                for xIndex in 0..<11 {
-                    kernelString += "\(self.conv1.filter[Int32(yIndex), Int32(xIndex), 0, 0]),"
-                }
-
-                kernelString += "\n"
-            }
-            print("Kernel: \n\(kernelString)")
-            print("Bias: \(self.conv1.bias)")
             
+            self.conv2 = Conv2D(filterShape: (5, 5, 96, 256), strides: (1, 1), padding: .same)
             let conv2Weights = try loadWeights(from: "conv2.weights", directory: directory, filterShape: (5, 5, 96, 256))
             let conv2Bias = try loadBiases(from: "conv2.biases", directory: directory)
+            self.conv2.filter = conv2Weights
+            self.conv2.bias = conv2Bias
+
+            self.conv3 = Conv2D(filterShape: (3, 3, 256, 384), strides: (1, 1), padding: .same)
             let conv3Weights = try loadWeights(from: "conv3.weights", directory: directory, filterShape: (3, 3, 256, 384))
             let conv3Bias = try loadBiases(from: "conv3.biases", directory: directory)
+            self.conv3.filter = conv3Weights
+            self.conv3.bias = conv3Bias
+
+            self.conv4 = Conv2D(filterShape: (3, 3, 384, 384), strides: (1, 1), padding: .same)
             let conv4Weights = try loadWeights(from: "conv4.weights", directory: directory, filterShape: (3, 3, 384, 384))
             let conv4Bias = try loadBiases(from: "conv4.biases", directory: directory)
+            self.conv4.filter = conv4Weights
+            self.conv4.bias = conv4Bias
+
+            self.conv5 = Conv2D(filterShape: (3, 3, 384, 256), strides: (1, 1), padding: .same)
             let conv5Weights = try loadWeights(from: "conv5.weights", directory: directory, filterShape: (3, 3, 384, 256))
             let conv5Bias = try loadBiases(from: "conv5.biases", directory: directory)
-
-            self.conv2 = Conv2D(filterShape: (5, 5, 96, 256), strides: (1, 1), padding: .same)
-            self.conv3 = Conv2D(filterShape: (3, 3, 256, 384), strides: (1, 1), padding: .same)
-            self.conv4 = Conv2D(filterShape: (3, 3, 384, 384), strides: (1, 1), padding: .same)
-            self.conv5 = Conv2D(filterShape: (3, 3, 384, 256), strides: (1, 1), padding: .same)
+            self.conv5.filter = conv5Weights
+            self.conv5.bias = conv5Bias
         } else {
             // Random initialization
             self.conv1 = Conv2D(filterShape: (11, 11, 3, 96), strides: (4, 4), padding: .valid)
@@ -110,4 +109,15 @@ func loss(model: AlexNet, images: Tensor<Float>, labels: Tensor<Int32>) -> Tenso
     let oneHotLabels = Tensor<Float>(oneHotAtIndices: labels, depth: logits.shape[1])
     let crossEntropyLoss = softmaxCrossEntropy(logits: logits, labels: oneHotLabels)
     return crossEntropyLoss
+}
+
+func accuracy(model: AlexNet, images: Tensor<Float>, labels: Tensor<Int32>) -> Float {
+    let results = softmax(model.applied(to: images))
+    let predictedLabels = results.argmax(squeezingAxis: 1)
+    let labelComparison = predictedLabels .== labels
+    let matches = labelComparison.scalars.reduce(0.0){ accumulator, value in
+        if value { return accumulator + 1} else { return accumulator }
+    }
+    
+    return 100.0 * Float(matches) / Float(labels.shape[0])
 }

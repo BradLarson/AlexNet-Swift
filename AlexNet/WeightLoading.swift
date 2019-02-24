@@ -29,7 +29,7 @@ func loadWeights(from weightsFile: String, directory: URL, filterShape: (Int, In
         return Tensor<Float>(zeros: [Int32(filterShape.0), Int32(filterShape.1), Int32(filterShape.2), Int32(filterShape.3)])
     }
     
-    var reorderedWeights = [Float](repeating: 0.0 , count: weightValues.count)
+    var reorderedWeights = [Float](repeating: 0.0, count: weightValues.count)
     
     let (kernelHeight, kernelWidth, inputChannels, outputChannels) = filterShape
 
