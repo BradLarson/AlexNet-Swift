@@ -37,10 +37,8 @@ print("Epoch, loss, accuracy(train), accuracy(val)")
 
 let startTime = NSDate()
 for epochNumber in 0..<500 {
-    var currentLoss = Tensor<Float>(zeros: [1])
-    let gradients = gradient(at: alexNet) { model -> Tensor<Float> in
-        currentLoss = loss(model: model, images: trainingImageDataset.imageData, labels: trainingImageDataset.imageLabels)
-        return currentLoss
+    let (currentLoss, gradients) = valueWithGradient(at: alexNet) { model -> Tensor<Float> in
+        return loss(model: model, images: trainingImageDataset.imageData, labels: trainingImageDataset.imageLabels)
     }
     let currentTrainingAccuracy = accuracy(model: alexNet, images: trainingImageDataset.imageData, labels: trainingImageDataset.imageLabels)
 
