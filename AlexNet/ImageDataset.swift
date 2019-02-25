@@ -12,7 +12,12 @@ struct ImageDataset {
     let imageData:Tensor<Float>
     let imageLabels:Tensor<Int32>
     
-    init(imageDirectory: URL, imageSize: (Int, Int)) throws {
+    enum ByteOrdering {
+        case bgr
+        case rgb
+    }
+    
+    init(imageDirectory: URL, imageSize: (Int, Int), byteOrdering: ByteOrdering = .rgb) throws {
         let dirContents = try FileManager.default.contentsOfDirectory(at:imageDirectory, includingPropertiesForKeys: [.isDirectoryKey], options:[.skipsHiddenFiles])
         
         var newImageData:[Float] = []
@@ -43,9 +48,15 @@ struct ImageDataset {
                 //        CGContextSetBlendMode(imageContext, kCGBlendModeCopy); // From Technical Q&A QA1708: http://developer.apple.com/library/ios/#qa/qa1708/_index.html
                 imageContext?.draw(currentImage.cgImage(forProposedRect:nil, context:nil, hints:nil)!, in:CGRect(x:0.0, y:0.0, width:CGFloat(imageSize.0), height:CGFloat(imageSize.1)))
                 for currentPixelIndex in 0..<totalImageSize {
-                    imageFloats[currentPixelIndex * 3] = Float(rawImageData[currentPixelIndex * 4])
-                    imageFloats[(currentPixelIndex * 3) + 1] = Float(rawImageData[(currentPixelIndex * 4) + 1])
-                    imageFloats[(currentPixelIndex * 3) + 2] = Float(rawImageData[(currentPixelIndex * 4) + 1])
+                    if (byteOrdering == .bgr) {
+                        imageFloats[(currentPixelIndex * 3) + 2] = Float(rawImageData[currentPixelIndex * 4])
+                        imageFloats[(currentPixelIndex * 3) + 1] = Float(rawImageData[(currentPixelIndex * 4) + 1])
+                        imageFloats[(currentPixelIndex * 3)] = Float(rawImageData[(currentPixelIndex * 4) + 2])
+                    } else {
+                        imageFloats[(currentPixelIndex * 3)] = Float(rawImageData[currentPixelIndex * 4])
+                        imageFloats[(currentPixelIndex * 3) + 1] = Float(rawImageData[(currentPixelIndex * 4) + 1])
+                        imageFloats[(currentPixelIndex * 3) + 2] = Float(rawImageData[(currentPixelIndex * 4) + 2])
+                    }
                 }
                 
                 rawImageData.deallocate()
@@ -71,11 +82,7 @@ struct ImageDataset {
 // Drawn from Atika's answer on Stack Overflow here: https://stackoverflow.com/a/42915296/19679
 extension NSImage {
     func resized(to newSize: NSSize) -> NSImage? {
-        if let bitmapRep = NSBitmapImageRep(
-            bitmapDataPlanes: nil, pixelsWide: Int(newSize.width), pixelsHigh: Int(newSize.height),
-            bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
-            colorSpaceName: .calibratedRGB, bytesPerRow: 0, bitsPerPixel: 0
-            ) {
+        if let bitmapRep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(newSize.width), pixelsHigh: Int(newSize.height), bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .calibratedRGB, bytesPerRow: 0, bitsPerPixel: 0) {
             bitmapRep.size = newSize
             NSGraphicsContext.saveGraphicsState()
             NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: bitmapRep)

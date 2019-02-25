@@ -15,11 +15,11 @@ let weightsDirectory = "weights"
 
 // Load image dataset
 let trainingImageDirectoryURL = URL(fileURLWithPath:"\(imageDirectory)/train")
-let trainingImageDataset = try! ImageDataset(imageDirectory: trainingImageDirectoryURL, imageSize: (227, 227))
+let trainingImageDataset = try! ImageDataset(imageDirectory: trainingImageDirectoryURL, imageSize: (227, 227), byteOrdering: .bgr)
 let classCount = trainingImageDataset.classes
 let batchSize = trainingImageDataset.imageData.shape[0]
 let validationImageDirectoryURL = URL(fileURLWithPath:"\(imageDirectory)/val")
-let validationImageDataset = try! ImageDataset(imageDirectory: validationImageDirectoryURL, imageSize: (227, 227))
+let validationImageDataset = try! ImageDataset(imageDirectory: validationImageDirectoryURL, imageSize: (227, 227), byteOrdering: .bgr)
 print("Dataset classes: \(trainingImageDataset.classes), labels: \(trainingImageDataset.labels)")
 
 // Initialize network
@@ -32,9 +32,10 @@ let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9)
 let validationInterval = 10
 
 print("Start of training process")
+print("Epoch, loss, accuracy(train), accuracy(val)")
 
 let startTime = NSDate()
-for epochNumber in 0..<220 {
+for epochNumber in 0..<500 {
     var currentLoss = Tensor<Float>(zeros: [1])
     let gradients = gradient(at: alexNet) { model -> Tensor<Float> in
         currentLoss = loss(model: model, images: trainingImageDataset.imageData, labels: trainingImageDataset.imageLabels)
@@ -43,11 +44,14 @@ for epochNumber in 0..<220 {
     let currentTrainingAccuracy = accuracy(model: alexNet, images: trainingImageDataset.imageData, labels: trainingImageDataset.imageLabels)
 
     optimizer.update(&alexNet.allDifferentiableVariables, along: gradients)
-    print("Completed epoch \(epochNumber), loss: \(currentLoss), training accuracy: \(currentTrainingAccuracy)")
+//    print("Completed epoch \(epochNumber), loss: \(currentLoss), training accuracy: \(currentTrainingAccuracy)")
 
     if ((epochNumber % validationInterval) == 0) {
         let currentValidationAccuracy = accuracy(model: alexNet, images: validationImageDataset.imageData, labels: validationImageDataset.imageLabels)
-        print("Validation accuracy: \(currentValidationAccuracy)")
+//        print("Validation accuracy: \(currentValidationAccuracy)")
+        print("\(epochNumber), \(currentLoss), \(currentTrainingAccuracy), \(currentValidationAccuracy)")
+    } else {
+        print("\(epochNumber), \(currentLoss), \(currentTrainingAccuracy)")
     }
 }
 let endTime = -startTime.timeIntervalSinceNow

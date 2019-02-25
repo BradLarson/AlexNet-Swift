@@ -15,6 +15,7 @@
 		BC04987D222239A800270889 /* libtensorflow.so in Frameworks */ = {isa = PBXBuildFile; fileRef = BC04987B222239A800270889 /* libtensorflow.so */; };
 		BC236339221C6EAB00C20FE4 /* AlexNet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA444E2221B686000C440F9 /* AlexNet.swift */; };
 		BC23633B221CC07200C20FE4 /* LRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23633A221CC07200C20FE4 /* LRN.swift */; };
+		BC910798222366D0005C0D18 /* TensorVisualization.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC910797222366D0005C0D18 /* TensorVisualization.swift */; };
 		BCA444DC221B678100C440F9 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA444DB221B678100C440F9 /* main.swift */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		BC04987A222239A800270889 /* libtensorflow_framework.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow_framework.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-DEVELOPMENT-2019-02-20-a.xctoolchain/usr/lib/swift/macosx/libtensorflow_framework.so"; sourceTree = "<group>"; };
 		BC04987B222239A800270889 /* libtensorflow.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-DEVELOPMENT-2019-02-20-a.xctoolchain/usr/lib/swift/macosx/libtensorflow.so"; sourceTree = "<group>"; };
 		BC23633A221CC07200C20FE4 /* LRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRN.swift; sourceTree = "<group>"; };
+		BC910797222366D0005C0D18 /* TensorVisualization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TensorVisualization.swift; sourceTree = "<group>"; };
 		BCA444D8221B678100C440F9 /* AlexNet-Swift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "AlexNet-Swift"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCA444DB221B678100C440F9 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		BCA444E2221B686000C440F9 /* AlexNet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlexNet.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				BC23633A221CC07200C20FE4 /* LRN.swift */,
 				BC0498032220D7D000270889 /* WeightLoading.swift */,
 				BC0498742221E88E00270889 /* ImageDataset.swift */,
+				BC910797222366D0005C0D18 /* TensorVisualization.swift */,
 			);
 			path = AlexNet;
 			sourceTree = "<group>";
@@ -164,6 +167,7 @@
 				BC23633B221CC07200C20FE4 /* LRN.swift in Sources */,
 				BCA444DC221B678100C440F9 /* main.swift in Sources */,
 				BC236339221C6EAB00C20FE4 /* AlexNet.swift in Sources */,
+				BC910798222366D0005C0D18 /* TensorVisualization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

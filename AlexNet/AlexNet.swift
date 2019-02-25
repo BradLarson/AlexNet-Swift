@@ -82,7 +82,9 @@ public struct AlexNet: Layer {
     
     @differentiable(wrt: (self, input))
     public func applied(to input: Tensor<Float>) -> Tensor<Float> {
+//        input.saveOutputMosaicImageToDisk(prefix: "input")
         let conv1Result = relu(conv1.applied(to: input))
+//        conv1Result.saveOutputMosaicImageToDisk(prefix: "conv1")
         let norm1Result = norm1.applied(to: conv1Result)
         let pool1Result = pool1.applied(to: norm1Result)
         let conv2Result = relu(conv2.applied(to: pool1Result))
