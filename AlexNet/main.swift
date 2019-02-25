@@ -14,12 +14,13 @@ let weightsDirectory = "weights"
 //let fakeLabelBatch = Tensor<Int32>(zeros: [batchSize])
 
 // Load image dataset
+
 let trainingImageDirectoryURL = URL(fileURLWithPath:"\(imageDirectory)/train")
-let trainingImageDataset = try! ImageDataset(imageDirectory: trainingImageDirectoryURL, imageSize: (227, 227), byteOrdering: .bgr)
+let trainingImageDataset = try! ImageDataset(imageDirectory: trainingImageDirectoryURL, imageSize: (227, 227), byteOrdering: .bgr, pixelMeanToSubtract: 128.0)
 let classCount = trainingImageDataset.classes
 let batchSize = trainingImageDataset.imageData.shape[0]
 let validationImageDirectoryURL = URL(fileURLWithPath:"\(imageDirectory)/val")
-let validationImageDataset = try! ImageDataset(imageDirectory: validationImageDirectoryURL, imageSize: (227, 227), byteOrdering: .bgr)
+let validationImageDataset = try! ImageDataset(imageDirectory: validationImageDirectoryURL, imageSize: (227, 227), byteOrdering: .bgr, pixelMeanToSubtract: 128.0)
 print("Dataset classes: \(trainingImageDataset.classes), labels: \(trainingImageDataset.labels)")
 
 // Initialize network
@@ -44,11 +45,9 @@ for epochNumber in 0..<500 {
     let currentTrainingAccuracy = accuracy(model: alexNet, images: trainingImageDataset.imageData, labels: trainingImageDataset.imageLabels)
 
     optimizer.update(&alexNet.allDifferentiableVariables, along: gradients)
-//    print("Completed epoch \(epochNumber), loss: \(currentLoss), training accuracy: \(currentTrainingAccuracy)")
 
     if ((epochNumber % validationInterval) == 0) {
         let currentValidationAccuracy = accuracy(model: alexNet, images: validationImageDataset.imageData, labels: validationImageDataset.imageLabels)
-//        print("Validation accuracy: \(currentValidationAccuracy)")
         print("\(epochNumber), \(currentLoss), \(currentTrainingAccuracy), \(currentValidationAccuracy)")
     } else {
         print("\(epochNumber), \(currentLoss), \(currentTrainingAccuracy)")

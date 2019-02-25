@@ -11,10 +11,10 @@
 		BC04986A2221C4D900270889 /* weights in CopyFiles */ = {isa = PBXBuildFile; fileRef = BC0498692221C4D900270889 /* weights */; };
 		BC04986C2221C4EA00270889 /* images in CopyFiles */ = {isa = PBXBuildFile; fileRef = BC04986B2221C4EA00270889 /* images */; };
 		BC0498752221E88E00270889 /* ImageDataset.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0498742221E88E00270889 /* ImageDataset.swift */; };
-		BC04987C222239A800270889 /* libtensorflow_framework.so in Frameworks */ = {isa = PBXBuildFile; fileRef = BC04987A222239A800270889 /* libtensorflow_framework.so */; };
-		BC04987D222239A800270889 /* libtensorflow.so in Frameworks */ = {isa = PBXBuildFile; fileRef = BC04987B222239A800270889 /* libtensorflow.so */; };
 		BC236339221C6EAB00C20FE4 /* AlexNet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA444E2221B686000C440F9 /* AlexNet.swift */; };
 		BC23633B221CC07200C20FE4 /* LRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23633A221CC07200C20FE4 /* LRN.swift */; };
+		BC8CC1BE22246C3E00F77A60 /* libtensorflow_framework.so in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8CC1BC22246C3E00F77A60 /* libtensorflow_framework.so */; };
+		BC8CC1BF22246C3E00F77A60 /* libtensorflow.so in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8CC1BD22246C3E00F77A60 /* libtensorflow.so */; };
 		BC910798222366D0005C0D18 /* TensorVisualization.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC910797222366D0005C0D18 /* TensorVisualization.swift */; };
 		BCA444DC221B678100C440F9 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA444DB221B678100C440F9 /* main.swift */; };
 /* End PBXBuildFile section */
@@ -38,15 +38,13 @@
 		BC0498692221C4D900270889 /* weights */ = {isa = PBXFileReference; lastKnownFileType = folder; path = weights; sourceTree = "<group>"; };
 		BC04986B2221C4EA00270889 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
 		BC0498742221E88E00270889 /* ImageDataset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataset.swift; sourceTree = "<group>"; };
-		BC04987A222239A800270889 /* libtensorflow_framework.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow_framework.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-DEVELOPMENT-2019-02-20-a.xctoolchain/usr/lib/swift/macosx/libtensorflow_framework.so"; sourceTree = "<group>"; };
-		BC04987B222239A800270889 /* libtensorflow.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-DEVELOPMENT-2019-02-20-a.xctoolchain/usr/lib/swift/macosx/libtensorflow.so"; sourceTree = "<group>"; };
 		BC23633A221CC07200C20FE4 /* LRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRN.swift; sourceTree = "<group>"; };
+		BC8CC1BC22246C3E00F77A60 /* libtensorflow_framework.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow_framework.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-DEVELOPMENT-2019-02-10-a.xctoolchain/usr/lib/swift/macosx/libtensorflow_framework.so"; sourceTree = "<group>"; };
+		BC8CC1BD22246C3E00F77A60 /* libtensorflow.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-DEVELOPMENT-2019-02-10-a.xctoolchain/usr/lib/swift/macosx/libtensorflow.so"; sourceTree = "<group>"; };
 		BC910797222366D0005C0D18 /* TensorVisualization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TensorVisualization.swift; sourceTree = "<group>"; };
 		BCA444D8221B678100C440F9 /* AlexNet-Swift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "AlexNet-Swift"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCA444DB221B678100C440F9 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		BCA444E2221B686000C440F9 /* AlexNet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlexNet.swift; sourceTree = "<group>"; };
-		BCA444E5221B68B100C440F9 /* libtensorflow_framework.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow_framework.so; path = "../../../../../Library/Developer/Toolchains/swift-tensorflow-DEVELOPMENT-2019-02-10-a.xctoolchain/usr/lib/swift/macosx/libtensorflow_framework.so"; sourceTree = "<group>"; };
-		BCA444E6221B68B100C440F9 /* libtensorflow.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow.so; path = "../../../../../Library/Developer/Toolchains/swift-tensorflow-DEVELOPMENT-2019-02-10-a.xctoolchain/usr/lib/swift/macosx/libtensorflow.so"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,8 +52,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC04987C222239A800270889 /* libtensorflow_framework.so in Frameworks */,
-				BC04987D222239A800270889 /* libtensorflow.so in Frameworks */,
+				BC8CC1BE22246C3E00F77A60 /* libtensorflow_framework.so in Frameworks */,
+				BC8CC1BF22246C3E00F77A60 /* libtensorflow.so in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,10 +95,8 @@
 		BCA444E4221B68B100C440F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BC04987A222239A800270889 /* libtensorflow_framework.so */,
-				BC04987B222239A800270889 /* libtensorflow.so */,
-				BCA444E5221B68B100C440F9 /* libtensorflow_framework.so */,
-				BCA444E6221B68B100C440F9 /* libtensorflow.so */,
+				BC8CC1BC22246C3E00F77A60 /* libtensorflow_framework.so */,
+				BC8CC1BD22246C3E00F77A60 /* libtensorflow.so */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
