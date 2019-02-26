@@ -29,7 +29,7 @@ let learningPhaseIndicator = LearningPhaseIndicator()
 var alexNet = try! AlexNet(classCount: classCount, learningPhaseIndicator: learningPhaseIndicator, weightDirectory: weightsDirectoryURL)
 
 // Train
-let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9)
+let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9, decay: 0.00001)
 let validationInterval = 10
 
 print("Start of training process")
