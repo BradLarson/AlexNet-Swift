@@ -16,11 +16,11 @@ let weightsDirectory = "weights"
 // Load image dataset
 
 let trainingImageDirectoryURL = URL(fileURLWithPath:"\(imageDirectory)/train")
-let trainingImageDataset = try! ImageDataset(imageDirectory: trainingImageDirectoryURL, imageSize: (227, 227), byteOrdering: .bgr, pixelMeanToSubtract: 128.0)
+let trainingImageDataset = try! ImageDataset(imageDirectory: trainingImageDirectoryURL, imageSize: (227, 227), batchSize: 60, byteOrdering: .bgr, pixelMeanToSubtract: 0.0)
 let classCount = trainingImageDataset.classes
 let batchSize = trainingImageDataset.imageData.shape[0]
 let validationImageDirectoryURL = URL(fileURLWithPath:"\(imageDirectory)/val")
-let validationImageDataset = try! ImageDataset(imageDirectory: validationImageDirectoryURL, imageSize: (227, 227), byteOrdering: .bgr, pixelMeanToSubtract: 128.0)
+let validationImageDataset = try! ImageDataset(imageDirectory: validationImageDirectoryURL, imageSize: (227, 227), batchSize: 60, byteOrdering: .bgr, pixelMeanToSubtract: 0.0)
 print("Dataset classes: \(trainingImageDataset.classes), labels: \(trainingImageDataset.labels)")
 
 // Initialize network
@@ -34,26 +34,34 @@ if dumpTensorImages {
 }
 
 // Train
-let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9, decay: 0.00001)
+//let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9, decay: 0.00001)
+let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9)
 let validationInterval = 10
 
 print("Start of training process")
 print("Epoch, loss, accuracy(train), accuracy(val)")
 
+// randomShuffle
+
 let startTime = NSDate()
 for epochNumber in 0..<500 {
-    let (currentLoss, gradients) = valueWithGradient(at: alexNet) { model -> Tensor<Float> in
-        return loss(model: model, images: trainingImageDataset.imageData, labels: trainingImageDataset.imageLabels)
-    }
-    let currentTrainingAccuracy = accuracy(model: alexNet, images: trainingImageDataset.imageData, labels: trainingImageDataset.imageLabels)
+    let shuffledDataset = trainingImageDataset.combinedDataset.shuffled(sampleCount: 60, randomSeed: Int64(epochNumber)).batched(60)
+    for datasetItem in shuffledDataset {
+        let (currentLoss, gradients) = valueWithGradient(at: alexNet) { model -> Tensor<Float> in
+            return loss(model: model, images: datasetItem.first, labels: datasetItem.second)
+        }
 
-    optimizer.update(&alexNet.allDifferentiableVariables, along: gradients)
+        optimizer.update(&alexNet.allDifferentiableVariables, along: gradients)
 
-    if ((epochNumber % validationInterval) == 0) {
-        let currentValidationAccuracy = accuracy(model: alexNet, images: validationImageDataset.imageData, labels: validationImageDataset.imageLabels)
-        print("\(epochNumber), \(currentLoss), \(currentTrainingAccuracy), \(currentValidationAccuracy)")
-    } else {
-        print("\(epochNumber), \(currentLoss), \(currentTrainingAccuracy)")
+        let currentTrainingAccuracy = accuracy(model: alexNet, images: trainingImageDataset.imageData, labels: trainingImageDataset.imageLabels)
+        
+        
+        if ((epochNumber % validationInterval) == 0) {
+            let currentValidationAccuracy = accuracy(model: alexNet, images: validationImageDataset.imageData, labels: validationImageDataset.imageLabels)
+            print("\(epochNumber), \(currentLoss), \(currentTrainingAccuracy), \(currentValidationAccuracy)")
+        } else {
+            print("\(epochNumber), \(currentLoss), \(currentTrainingAccuracy)")
+        }
     }
 }
 let endTime = -startTime.timeIntervalSinceNow

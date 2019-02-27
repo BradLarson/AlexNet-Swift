@@ -33,7 +33,7 @@ func loadWeights(from weightsFile: String, directory: URL, filterShape: (Int, In
     
     let (kernelHeight, kernelWidth, inputChannels, outputChannels) = filterShape
 
-    let outputChannelWidth = /*groupedInputChannels * */ kernelWidth * kernelHeight
+    let outputChannelWidth = /*groupedInputChannels * */ kernelWidth * kernelHeight * inputChannels
 
     var reorderedWeightIndex = 0
     for heightInKernel in 0..<kernelHeight {

@@ -12,6 +12,8 @@ extension Tensor where Scalar == Float {
     public func saveOutputMosaicImageToDisk(prefix:String, spaceBetweenSlices:Int = 1) {
         // TODO: Rework this using TensorFlow Raw functions
 #if os(OSX)
+        print("Saving layer output: \(prefix)")
+
         let (mosaicImageData, imageWidth, imageHeight) = mosaicImageOfOutput(spaceBetweenLayers:spaceBetweenSlices)
         let imageByteSize = imageWidth * imageHeight * 4
 
@@ -44,6 +46,9 @@ extension Tensor where Scalar == Float {
         
         let minValue = self.min().scalarized()
         let maxValue = self.max().scalarized()
+        let meanValue = self.mean().scalarized()
+        
+        print("Layer min:\(minValue), max:\(maxValue), mean:\(meanValue)")
 
         let totalBytes = imageWidth * imageHeight
         // Initialize with black

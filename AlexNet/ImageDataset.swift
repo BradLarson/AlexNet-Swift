@@ -7,18 +7,27 @@ import Cocoa
 
 struct ImageDataset {
     let classes:Int
+    let batchSize:Int
     let labels:[String]
+//    let combinedImageData:TensorPair<Tensor<Float>,Tensor<Int32>>
     let imageData:Tensor<Float>
     let imageLabels:Tensor<Int32>
+    let combinedDataset:Dataset<TensorPair<Tensor<Float>, Tensor<Int32>>>
+    var shuffledAndBatchedDataset: Dataset<TensorPair<Tensor<Float>, Tensor<Int32>>> {
+        get {
+            return combinedDataset.shuffled(sampleCount:Int64(imageLabels.shape[0]), randomSeed: 0).batched(Int64(self.batchSize))
+        }
+    }
     
     enum ByteOrdering {
         case bgr
         case rgb
     }
     
-    init(imageDirectory: URL, imageSize: (Int, Int), byteOrdering: ByteOrdering = .rgb, pixelMeanToSubtract: Float = 0.0) throws {
+    init(imageDirectory: URL, imageSize: (Int, Int), batchSize: Int, byteOrdering: ByteOrdering = .rgb, pixelMeanToSubtract: Float = 0.0) throws {
         let dirContents = try FileManager.default.contentsOfDirectory(at:imageDirectory, includingPropertiesForKeys: [.isDirectoryKey], options:[.skipsHiddenFiles])
         
+        self.batchSize = batchSize
         var newImageData:[Float] = []
         var newLabels:[String] = []
         var newImageLabels:[Int32] = []
@@ -43,9 +52,12 @@ struct ImageDataset {
         
         self.classes = newLabels.count
         self.imageData = Tensor<Float>(shape:[Int32(newImageLabels.count), Int32(imageSize.0), Int32(imageSize.1), 3], scalars: newImageData)
-//        print("Image min: \(self.imageData.min()), max: \(self.imageData.max())")
         self.imageLabels = Tensor<Int32>(newImageLabels)
         self.labels = newLabels
+        
+        let testImageDataset = Dataset(elements: self.imageData)
+        let testImageLabels = Dataset(elements: self.imageLabels)
+        self.combinedDataset = zip(testImageDataset, testImageLabels)
     }
 }
 
@@ -69,7 +81,6 @@ func loadImageUsingCoreGraphics(from fileURL: URL, size: (Int, Int), byteOrderin
     
     guard let currentImage = NSImage(contentsOf: fileURL) else { return nil }
     
-//    let rawImageData = UnsafeMutablePointer<UInt8>.allocate(capacity:size.0 * size.1 * 4)
     let rawImageData = UnsafeMutablePointer<UInt8>.allocate(capacity:size.0 * size.1 * 4)
     
     let genericRGBColorspace = CGColorSpaceCreateDeviceRGB()
