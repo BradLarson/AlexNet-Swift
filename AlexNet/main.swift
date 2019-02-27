@@ -28,6 +28,11 @@ let weightsDirectoryURL = URL(fileURLWithPath:weightsDirectory)
 let learningPhaseIndicator = LearningPhaseIndicator()
 var alexNet = try! AlexNet(classCount: classCount, learningPhaseIndicator: learningPhaseIndicator, weightDirectory: weightsDirectoryURL)
 
+let dumpTensorImages = false
+if dumpTensorImages {
+    alexNet.debugOutput(for: "images/val/dog/pexels-photo-1851471.jpeg")
+}
+
 // Train
 let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9, decay: 0.00001)
 let validationInterval = 10

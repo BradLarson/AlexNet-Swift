@@ -8,8 +8,9 @@ func dataProviderReleaseCallback(_ context:UnsafeMutableRawPointer?, data:Unsafe
 }
 #endif
 
-extension Tensor {
+extension Tensor where Scalar == Float {
     public func saveOutputMosaicImageToDisk(prefix:String, spaceBetweenSlices:Int = 1) {
+        // TODO: Rework this using TensorFlow Raw functions
 #if os(OSX)
         let (mosaicImageData, imageWidth, imageHeight) = mosaicImageOfOutput(spaceBetweenLayers:spaceBetweenSlices)
         let imageByteSize = imageWidth * imageHeight * 4
@@ -41,6 +42,9 @@ extension Tensor {
         let imageByteSize = imageWidth * imageHeight * 4
         let imageData = UnsafeMutablePointer<UInt8>.allocate(capacity:imageByteSize)
         
+        let minValue = self.min().scalarized()
+        let maxValue = self.max().scalarized()
+
         let totalBytes = imageWidth * imageHeight
         // Initialize with black
         for currentPixelIndex in 0..<totalBytes {
@@ -50,7 +54,27 @@ extension Tensor {
             imageData[(currentPixelIndex * 4) + 3] = 255
         }
         
-        // TODO: Pull in my image coloration code
+        for layerIndex in 0..<numLayers {
+            let layerLocationInY = Int(floor(Double(layerIndex) / Double(numberOfLayersAcross)))
+            let layerLocationInX = layerIndex - (layerLocationInY * numberOfLayersAcross)
+            let startingLayerOutputByteLocation = (layerLocationInY * imageWidth * (height + spaceBetweenLayers) + layerLocationInX * (width + spaceBetweenLayers)) * 4
+            
+            for currentLayerY in 0..<height {
+                for currentLayerX in 0..<width {
+                    let firstOutputByteLocation = startingLayerOutputByteLocation + (currentLayerY * imageWidth + currentLayerX) * 4
+                    
+                    // TODO: Rework this so that it's not an enormously slow element-by-element read
+                    let floatValue = self[0, Int32(currentLayerY), Int32(currentLayerX), Int32(layerIndex)].scalarized()
+                    let (redChannel, blueChannel, greenChannel) = visualizationColor(from: floatValue, scale: .heatmap, minValue: minValue, maxValue: maxValue)
+
+                    imageData[firstOutputByteLocation] = redChannel
+                    imageData[firstOutputByteLocation + 1] = blueChannel
+                    imageData[firstOutputByteLocation + 2] = greenChannel
+                    imageData[firstOutputByteLocation + 3] = 255
+                }
+            }
+
+        }
         
         return (imageData, imageWidth, imageHeight)
     }
@@ -103,4 +127,41 @@ func visualizationColor(from value:Float, scale:LayerVisualizationColorScale, mi
         
         return (red:UInt8(max(min(round(redValue * 255), 255), 0)), green:UInt8(max(min(round(greenValue * 255), 255), 0)), blue:UInt8(max(min(round(blueValue * 255), 255), 0)))
     }
+}
+
+public extension AlexNet {
+    func debugOutput(for testFile: String) {
+        let testImageURL = URL(fileURLWithPath: testFile)
+        let imageFloats = loadImageUsingTensorFlow(from: testImageURL, size: (227, 227), byteOrdering: .bgr, pixelMeanToSubtract: 0.0)!
+        let input = Tensor<Float>(shape:[1, 227, 227, 3], scalars: imageFloats)
+
+        input.saveOutputMosaicImageToDisk(prefix: "input")
+        let conv1Result = relu(conv1.applied(to: input))
+        conv1Result.saveOutputMosaicImageToDisk(prefix: "conv1")
+        let norm1Result = norm1.applied(to: conv1Result)
+        norm1Result.saveOutputMosaicImageToDisk(prefix: "norm1")
+        let pool1Result = pool1.applied(to: norm1Result)
+        pool1Result.saveOutputMosaicImageToDisk(prefix: "pool1")
+        let conv2Result = relu(conv2.applied(to: pool1Result))
+        conv2Result.saveOutputMosaicImageToDisk(prefix: "conv2")
+        let norm2Result = norm2.applied(to: conv2Result)
+        norm2Result.saveOutputMosaicImageToDisk(prefix: "norm2")
+        let pool2Result = pool2.applied(to: norm2Result)
+        pool2Result.saveOutputMosaicImageToDisk(prefix: "pool2")
+        let conv3Result = relu(conv3.applied(to: pool2Result))
+        conv3Result.saveOutputMosaicImageToDisk(prefix: "conv3")
+        let conv4Result = relu(conv4.applied(to: conv3Result))
+        conv4Result.saveOutputMosaicImageToDisk(prefix: "conv4")
+        let conv5Result = relu(conv5.applied(to: conv4Result))
+        conv5Result.saveOutputMosaicImageToDisk(prefix: "conv5")
+        let pool5Result = pool5.applied(to: conv5Result)
+        pool5Result.saveOutputMosaicImageToDisk(prefix: "pool5")
+//        let reshapedIntermediate = pool5Result.reshaped(toShape: Tensor<Int32>([pool5Result.shape[Int32(0)], 9216]))
+//        let fc6Result = fc6.applied(to: reshapedIntermediate)
+//        let drop6Result = drop6.applied(to: fc6Result)
+//        let fc7Result = fc7.applied(to: drop6Result)
+//        let drop7Result = drop7.applied(to: fc7Result)
+//        let fc8Result = fc8.applied(to: drop7Result)
+    }
+
 }
