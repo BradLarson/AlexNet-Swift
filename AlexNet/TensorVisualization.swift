@@ -58,18 +58,19 @@ extension Tensor where Scalar == Float {
             imageData[(currentPixelIndex * 4) + 2] = 0
             imageData[(currentPixelIndex * 4) + 3] = 255
         }
+
+        let floatBuffer = self[Int32(0)].scalars
         
-        for layerIndex in 0..<numLayers {
-            let layerLocationInY = Int(floor(Double(layerIndex) / Double(numberOfLayersAcross)))
-            let layerLocationInX = layerIndex - (layerLocationInY * numberOfLayersAcross)
-            let startingLayerOutputByteLocation = (layerLocationInY * imageWidth * (height + spaceBetweenLayers) + layerLocationInX * (width + spaceBetweenLayers)) * 4
-            
-            for currentLayerY in 0..<height {
-                for currentLayerX in 0..<width {
+        for currentLayerY in 0..<height {
+            for currentLayerX in 0..<width {
+                for layerIndex in 0..<numLayers {
+                    let layerLocationInY = Int(floor(Double(layerIndex) / Double(numberOfLayersAcross)))
+                    let layerLocationInX = layerIndex - (layerLocationInY * numberOfLayersAcross)
+                    let startingLayerOutputByteLocation = (layerLocationInY * imageWidth * (height + spaceBetweenLayers) + layerLocationInX * (width + spaceBetweenLayers)) * 4
                     let firstOutputByteLocation = startingLayerOutputByteLocation + (currentLayerY * imageWidth + currentLayerX) * 4
-                    
-                    // TODO: Rework this so that it's not an enormously slow element-by-element read
-                    let floatValue = self[0, Int32(currentLayerY), Int32(currentLayerX), Int32(layerIndex)].scalarized()
+                
+//                let floatValue = self[Int32(0)][Int32(currentLayerY)][Int32(currentLayerX)][Int32(layerIndex)].scalarized()
+                    let floatValue = floatBuffer[currentLayerY * width * numLayers + currentLayerX * numLayers + layerIndex]
                     let (redChannel, blueChannel, greenChannel) = visualizationColor(from: floatValue, scale: .heatmap, minValue: minValue, maxValue: maxValue)
 
                     imageData[firstOutputByteLocation] = redChannel
@@ -78,7 +79,6 @@ extension Tensor where Scalar == Float {
                     imageData[firstOutputByteLocation + 3] = 255
                 }
             }
-
         }
         
         return (imageData, imageWidth, imageHeight)
@@ -136,30 +136,32 @@ func visualizationColor(from value:Float, scale:LayerVisualizationColorScale, mi
 
 public extension AlexNet {
     func debugOutput(for testFile: String) {
+        let inferenceContext = Context(learningPhase: .inference)
+
         let testImageURL = URL(fileURLWithPath: testFile)
         let imageFloats = loadImageUsingTensorFlow(from: testImageURL, size: (227, 227), byteOrdering: .bgr, pixelMeanToSubtract: 0.0)!
         let input = Tensor<Float>(shape:[1, 227, 227, 3], scalars: imageFloats)
 
         input.saveOutputMosaicImageToDisk(prefix: "input")
-        let conv1Result = relu(conv1.applied(to: input))
+        let conv1Result = conv1.applied(to: input, in: inferenceContext)
         conv1Result.saveOutputMosaicImageToDisk(prefix: "conv1")
-        let norm1Result = norm1.applied(to: conv1Result)
+        let norm1Result = norm1.applied(to: conv1Result, in: inferenceContext)
         norm1Result.saveOutputMosaicImageToDisk(prefix: "norm1")
-        let pool1Result = pool1.applied(to: norm1Result)
+        let pool1Result = pool1.applied(to: norm1Result, in: inferenceContext)
         pool1Result.saveOutputMosaicImageToDisk(prefix: "pool1")
-        let conv2Result = relu(conv2.applied(to: pool1Result))
+        let conv2Result = conv2.applied(to: pool1Result, in: inferenceContext)
         conv2Result.saveOutputMosaicImageToDisk(prefix: "conv2")
-        let norm2Result = norm2.applied(to: conv2Result)
+        let norm2Result = norm2.applied(to: conv2Result, in: inferenceContext)
         norm2Result.saveOutputMosaicImageToDisk(prefix: "norm2")
-        let pool2Result = pool2.applied(to: norm2Result)
+        let pool2Result = pool2.applied(to: norm2Result, in: inferenceContext)
         pool2Result.saveOutputMosaicImageToDisk(prefix: "pool2")
-        let conv3Result = relu(conv3.applied(to: pool2Result))
+        let conv3Result = conv3.applied(to: pool2Result, in: inferenceContext)
         conv3Result.saveOutputMosaicImageToDisk(prefix: "conv3")
-        let conv4Result = relu(conv4.applied(to: conv3Result))
+        let conv4Result = conv4.applied(to: conv3Result, in: inferenceContext)
         conv4Result.saveOutputMosaicImageToDisk(prefix: "conv4")
-        let conv5Result = relu(conv5.applied(to: conv4Result))
+        let conv5Result = conv5.applied(to: conv4Result, in: inferenceContext)
         conv5Result.saveOutputMosaicImageToDisk(prefix: "conv5")
-        let pool5Result = pool5.applied(to: conv5Result)
+        let pool5Result = pool5.applied(to: conv5Result, in: inferenceContext)
         pool5Result.saveOutputMosaicImageToDisk(prefix: "pool5")
 //        let reshapedIntermediate = pool5Result.reshaped(toShape: Tensor<Int32>([pool5Result.shape[Int32(0)], 9216]))
 //        let fc6Result = fc6.applied(to: reshapedIntermediate)

@@ -25,8 +25,7 @@ print("Dataset classes: \(trainingImageDataset.classes), labels: \(trainingImage
 
 // Initialize network
 let weightsDirectoryURL = URL(fileURLWithPath:weightsDirectory)
-let learningPhaseIndicator = LearningPhaseIndicator()
-var alexNet = try! AlexNet(classCount: classCount, learningPhaseIndicator: learningPhaseIndicator, weightDirectory: weightsDirectoryURL)
+var alexNet = try! AlexNet(classCount: classCount, weightDirectory: weightsDirectoryURL)
 
 let dumpTensorImages = false
 if dumpTensorImages {
@@ -35,20 +34,20 @@ if dumpTensorImages {
 
 // Train
 //let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9, decay: 0.00001)
-let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9)
+let optimizer = SGD<AlexNet, Float>(learningRate: 0.002, momentum: 0.9)
 let validationInterval = 10
 
 print("Start of training process")
 print("Epoch, loss, accuracy(train), accuracy(val)")
 
-// randomShuffle
+let context = Context(learningPhase: .training)
 
 let startTime = NSDate()
-for epochNumber in 0..<500 {
+for epochNumber in 0..<100 {
     let shuffledDataset = trainingImageDataset.combinedDataset.shuffled(sampleCount: 60, randomSeed: Int64(epochNumber)).batched(60)
     for datasetItem in shuffledDataset {
         let (currentLoss, gradients) = valueWithGradient(at: alexNet) { model -> Tensor<Float> in
-            return loss(model: model, images: datasetItem.first, labels: datasetItem.second)
+            return loss(model: model, in: context, images: datasetItem.first, labels: datasetItem.second)
         }
 
         optimizer.update(&alexNet.allDifferentiableVariables, along: gradients)

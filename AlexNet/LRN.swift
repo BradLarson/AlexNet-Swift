@@ -11,7 +11,7 @@ struct LRN: Layer {
     @noDerivative let beta: Double
 
     @differentiable(wrt:(self, input))
-    func applied(to input: Tensor<Float>) -> Tensor<Float> {
+    func applied(to input: Tensor<Float>, in context: Context) -> Tensor<Float> {
         return localResponseNorm(input, depthRadius: depthRadius, bias: bias, alpha: alpha, beta: beta)
     }
 }
