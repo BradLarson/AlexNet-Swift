@@ -49,11 +49,11 @@ public struct AlexNet: Layer {
             self.conv5 = Conv2D<Float>(filter: conv5Weights, bias: conv5Bias, activation: relu, strides: (1, 1), padding: .same)
         } else {
             // Random initialization
-            self.conv1 = Conv2D(filterShape: (11, 11, 3, 96), strides: (4, 4), padding: .valid)
-            self.conv2 = Conv2D(filterShape: (5, 5, 96, 256), strides: (1, 1), padding: .same)
-            self.conv3 = Conv2D(filterShape: (3, 3, 256, 384), strides: (1, 1), padding: .same)
-            self.conv4 = Conv2D(filterShape: (3, 3, 384, 384), strides: (1, 1), padding: .same)
-            self.conv5 = Conv2D(filterShape: (3, 3, 384, 256), strides: (1, 1), padding: .same)
+            self.conv1 = Conv2D(filterShape: (11, 11, 3, 96), strides: (4, 4), padding: .valid, activation: relu)
+            self.conv2 = Conv2D(filterShape: (5, 5, 96, 256), strides: (1, 1), padding: .same, activation: relu)
+            self.conv3 = Conv2D(filterShape: (3, 3, 256, 384), strides: (1, 1), padding: .same, activation: relu)
+            self.conv4 = Conv2D(filterShape: (3, 3, 384, 384), strides: (1, 1), padding: .same, activation: relu)
+            self.conv5 = Conv2D(filterShape: (3, 3, 384, 256), strides: (1, 1), padding: .same, activation: relu)
         }
         
         self.norm1 = LRN(depthRadius: 5, bias: 1.0, alpha: 0.0001, beta: 0.75)
@@ -63,19 +63,20 @@ public struct AlexNet: Layer {
         self.pool5 = MaxPool2D(poolSize: (3, 3), strides: (2, 2), padding: .valid)
 
         // TODO: Find a faster way to initialize these
-        self.fc6 = Dense(inputSize: 9216, outputSize: fullyConnectedWidth, activation: relu) // 6 * 6 * 256 on input
-        self.fc6.bias = Tensor<Float>(shape: TensorShape(Int32(fullyConnectedWidth)), repeating: 0.1)
-        self.fc6.weight = Tensor<Float>(randomNormal: TensorShape(Int32(9216), Int32(fullyConnectedWidth)), mean: 0.0, stddev: 0.005, generator: &rng)
+        // The Gaussian distributions here are crucial to fast convergence and high generalization accuracy
+        let fc6Bias = Tensor<Float>(shape: TensorShape(Int32(fullyConnectedWidth)), repeating: 0.1)
+        let fc6Weight = Tensor<Float>(randomNormal: TensorShape(Int32(9216), Int32(fullyConnectedWidth)), mean: 0.0, stddev: 0.005, generator: &rng)
+        self.fc6 = Dense(weight: fc6Weight, bias: fc6Bias, activation: relu) // 6 * 6 * 256 on input
         self.drop6 = Dropout<Float>(probability: 0.5)
         
-        self.fc7 = Dense(inputSize: fullyConnectedWidth, outputSize: fullyConnectedWidth, activation: relu)
-        self.fc7.bias = Tensor<Float>(shape: TensorShape(Int32(fullyConnectedWidth)), repeating: 0.1)
-        self.fc7.weight = Tensor<Float>(randomNormal: TensorShape(Int32(fullyConnectedWidth), Int32(fullyConnectedWidth)), mean: 0.0, stddev: 0.005, generator: &rng)
+        let fc7Bias = Tensor<Float>(shape: TensorShape(Int32(fullyConnectedWidth)), repeating: 0.1)
+        let fc7Weight = Tensor<Float>(randomNormal: TensorShape(Int32(fullyConnectedWidth), Int32(fullyConnectedWidth)), mean: 0.0, stddev: 0.005, generator: &rng)
+        self.fc7 = Dense(weight: fc7Weight, bias: fc7Bias, activation: relu)
         self.drop7 = Dropout<Float>(probability: 0.5)
         
-        self.fc8 = Dense(inputSize: fullyConnectedWidth, outputSize: classCount, activation: { $0 } )
-        self.fc8.bias = Tensor<Float>(shape: TensorShape(Int32(classCount)), repeating: 0.0)
-        self.fc8.weight = Tensor<Float>(randomNormal: TensorShape(Int32(fullyConnectedWidth), Int32(classCount)), mean: 0.0, stddev: 0.01, generator: &rng)
+        let fc8Bias = Tensor<Float>(shape: TensorShape(Int32(classCount)), repeating: 0.0)
+        let fc8Weight = Tensor<Float>(randomNormal: TensorShape(Int32(fullyConnectedWidth), Int32(classCount)), mean: 0.0, stddev: 0.01, generator: &rng)
+        self.fc8 = Dense(weight: fc8Weight, bias: fc8Bias, activation: { $0 })
     }
 
     
