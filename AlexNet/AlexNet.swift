@@ -107,8 +107,7 @@ public struct AlexNet: Layer {
 @differentiable(wrt: model)
 func loss(model: AlexNet, in context: Context, images: Tensor<Float>, labels: Tensor<Int32>) -> Tensor<Float> {
     let logits = model.applied(to: images, in: context)
-    let oneHotLabels = Tensor<Float>(oneHotAtIndices: labels, depth: logits.shape[1])
-    let crossEntropyLoss = softmaxCrossEntropy(logits: logits, labels: oneHotLabels)
+    let crossEntropyLoss = softmaxCrossEntropy(logits: logits, labels: labels)
     return crossEntropyLoss
 }
 
