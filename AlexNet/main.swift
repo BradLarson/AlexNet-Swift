@@ -34,20 +34,20 @@ if dumpTensorImages {
 
 // Train
 //let optimizer = SGD<AlexNet, Float>(learningRate: 0.001, momentum: 0.9, decay: 0.00001)
-let optimizer = SGD<AlexNet, Float>(learningRate: 0.002, momentum: 0.9)
+let optimizer = SGD(for: alexNet, learningRate: 0.002, momentum: 0.9)
 let validationInterval = 10
 
 print("Start of training process")
 print("Epoch, loss, accuracy(train), accuracy(val)")
 
-let context = Context(learningPhase: .training)
+Context.local.learningPhase = .training
 
 let startTime = NSDate()
 for epochNumber in 0..<100 {
     let shuffledDataset = trainingImageDataset.combinedDataset.shuffled(sampleCount: 60, randomSeed: Int64(epochNumber)).batched(60)
     for datasetItem in shuffledDataset {
         let (currentLoss, gradients) = valueWithGradient(at: alexNet) { model -> Tensor<Float> in
-            return loss(model: model, in: context, images: datasetItem.first, labels: datasetItem.second)
+            return loss(model: model, images: datasetItem.first, labels: datasetItem.second)
         }
 
         optimizer.update(&alexNet.allDifferentiableVariables, along: gradients)

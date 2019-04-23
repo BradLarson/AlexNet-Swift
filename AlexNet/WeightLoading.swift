@@ -26,7 +26,7 @@ func loadWeights(from weightsFile: String, directory: URL, filterShape: (Int, In
 
     guard (weightValues.count == (filterShape.0 * filterShape.1 * filterShape.2 * filterShape.3)) else {
         print("Weight mismatch, expected: \(filterShape.0 * filterShape.1 * filterShape.2 * filterShape.3), read: \(weightValues.count)")
-        return Tensor<Float>(zeros: [Int32(filterShape.0), Int32(filterShape.1), Int32(filterShape.2), Int32(filterShape.3)])
+        return Tensor<Float>(zeros: [filterShape.0, filterShape.1, filterShape.2, filterShape.3])
     }
     
     var reorderedWeights = [Float](repeating: 0.0, count: weightValues.count)
@@ -53,7 +53,7 @@ func loadWeights(from weightsFile: String, directory: URL, filterShape: (Int, In
         }
     }
     
-    return Tensor<Float>(shape: [Int32(filterShape.0), Int32(filterShape.1), Int32(filterShape.2), Int32(filterShape.3)], scalars: reorderedWeights)
+    return Tensor<Float>(shape: [filterShape.0, filterShape.1, filterShape.2, filterShape.3], scalars: reorderedWeights)
 }
 
 func loadBiases(from biasFile: String, directory: URL) throws -> Tensor<Float> {

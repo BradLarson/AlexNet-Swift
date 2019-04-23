@@ -12,10 +12,10 @@ struct ImageDataset {
 //    let combinedImageData:TensorPair<Tensor<Float>,Tensor<Int32>>
     let imageData:Tensor<Float>
     let imageLabels:Tensor<Int32>
-    let combinedDataset:Dataset<TensorPair<Tensor<Float>, Tensor<Int32>>>
-    var shuffledAndBatchedDataset: Dataset<TensorPair<Tensor<Float>, Tensor<Int32>>> {
+    let combinedDataset:Dataset<Zip2TensorGroup<Tensor<Float>, Tensor<Int32>>>
+    var shuffledAndBatchedDataset: Dataset<Zip2TensorGroup<Tensor<Float>, Tensor<Int32>>> {
         get {
-            return combinedDataset.shuffled(sampleCount:Int64(imageLabels.shape[0]), randomSeed: 0).batched(Int64(self.batchSize))
+            return combinedDataset.shuffled(sampleCount:imageLabels.shape[0], randomSeed: 0).batched(self.batchSize)
         }
     }
     
@@ -51,7 +51,7 @@ struct ImageDataset {
         }
         
         self.classes = newLabels.count
-        self.imageData = Tensor<Float>(shape:[Int32(newImageLabels.count), Int32(imageSize.0), Int32(imageSize.1), 3], scalars: newImageData)
+        self.imageData = Tensor<Float>(shape:[newImageLabels.count, imageSize.0, imageSize.1, 3], scalars: newImageData)
         self.imageLabels = Tensor<Int32>(newImageLabels)
         self.labels = newLabels
         

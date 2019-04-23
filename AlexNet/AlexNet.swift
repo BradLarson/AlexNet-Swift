@@ -22,7 +22,6 @@ public struct AlexNet: Layer {
     
 //    @noDerivative let fullyConnectedWidth = 4096
     @noDerivative let fullyConnectedWidth = 256
-//    @noDerivative let fullyConnectedWidth = 16
 
     public init(classCount: Int, weightDirectory: URL? = nil) throws {
         if let directory = weightDirectory {
@@ -64,57 +63,55 @@ public struct AlexNet: Layer {
 
         // TODO: Find a faster way to initialize these
         // The Gaussian distributions here are crucial to fast convergence and high generalization accuracy
-        let fc6Bias = Tensor<Float>(shape: TensorShape(Int32(fullyConnectedWidth)), repeating: 0.1)
-        let fc6Weight = Tensor<Float>(randomNormal: TensorShape(Int32(9216), Int32(fullyConnectedWidth)), mean: 0.0, stddev: 0.005, generator: &rng)
+        let fc6Bias = Tensor<Float>(repeating: 0.1, shape: TensorShape(fullyConnectedWidth))
+        let fc6Weight = Tensor<Float>(randomNormal: TensorShape(9216, fullyConnectedWidth), mean: 0.0, stddev: 0.005, generator: &rng)
         self.fc6 = Dense(weight: fc6Weight, bias: fc6Bias, activation: relu) // 6 * 6 * 256 on input
         self.drop6 = Dropout<Float>(probability: 0.5)
         
-        let fc7Bias = Tensor<Float>(shape: TensorShape(Int32(fullyConnectedWidth)), repeating: 0.1)
-        let fc7Weight = Tensor<Float>(randomNormal: TensorShape(Int32(fullyConnectedWidth), Int32(fullyConnectedWidth)), mean: 0.0, stddev: 0.005, generator: &rng)
+        let fc7Bias = Tensor<Float>(repeating: 0.1, shape: TensorShape(fullyConnectedWidth))
+        let fc7Weight = Tensor<Float>(randomNormal: TensorShape(fullyConnectedWidth, fullyConnectedWidth), mean: 0.0, stddev: 0.005, generator: &rng)
         self.fc7 = Dense(weight: fc7Weight, bias: fc7Bias, activation: relu)
         self.drop7 = Dropout<Float>(probability: 0.5)
         
-        let fc8Bias = Tensor<Float>(shape: TensorShape(Int32(classCount)), repeating: 0.0)
-        let fc8Weight = Tensor<Float>(randomNormal: TensorShape(Int32(fullyConnectedWidth), Int32(classCount)), mean: 0.0, stddev: 0.01, generator: &rng)
+        let fc8Bias = Tensor<Float>(repeating: 0.0, shape: TensorShape(classCount))
+        let fc8Weight = Tensor<Float>(randomNormal: TensorShape(fullyConnectedWidth, classCount), mean: 0.0, stddev: 0.01, generator: &rng)
         self.fc8 = Dense(weight: fc8Weight, bias: fc8Bias, activation: { $0 })
     }
 
-    
-    
-    @differentiable(wrt: (self, input))
-    public func applied(to input: Tensor<Float>, in context: Context) -> Tensor<Float> {
-        let conv1Result = conv1.applied(to: input, in: context)
-        let norm1Result = norm1.applied(to: conv1Result, in: context)
-        let pool1Result = pool1.applied(to: norm1Result, in: context)
-        let conv2Result = conv2.applied(to: pool1Result, in: context)
-        let norm2Result = norm2.applied(to: conv2Result, in: context)
-        let pool2Result = pool2.applied(to: norm2Result, in: context)
-        let conv3Result = conv3.applied(to: pool2Result, in: context)
-        let conv4Result = conv4.applied(to: conv3Result, in: context)
-        let conv5Result = conv5.applied(to: conv4Result, in: context)
-        let pool5Result = pool5.applied(to: conv5Result, in: context)
-        let reshapedIntermediate = pool5Result.reshaped(toShape: Tensor<Int32>([pool5Result.shape[Int32(0)], 9216]))
-        let fc6Result = fc6.applied(to: reshapedIntermediate, in: context)
-        let drop6Result = drop6.applied(to: fc6Result, in: context)
-        let fc7Result = fc7.applied(to: drop6Result, in: context)
-        let drop7Result = drop7.applied(to: fc7Result, in: context)
-        let fc8Result = fc8.applied(to: drop7Result, in: context)
+    @differentiable
+    public func call(_ input: Tensor<Float>) -> Tensor<Float> {
+        let conv1Result = conv1(input)
+        let norm1Result = norm1(conv1Result)
+        let pool1Result = pool1(norm1Result)
+        let conv2Result = conv2(pool1Result)
+        let norm2Result = norm2(conv2Result)
+        let pool2Result = pool2(norm2Result)
+        let conv3Result = conv3(pool2Result)
+        let conv4Result = conv4(conv3Result)
+        let conv5Result = conv5(conv4Result)
+        let pool5Result = pool5(conv5Result)
+        let reshapedIntermediate = pool5Result.reshaped(toShape: Tensor<Int32>([Int32(pool5Result.shape[0]), 9216]))
+        let fc6Result = fc6(reshapedIntermediate)
+        let drop6Result = drop6(fc6Result)
+        let fc7Result = fc7(drop6Result)
+        let drop7Result = drop7(fc7Result)
+        let fc8Result = fc8(drop7Result)
 
         return fc8Result
     }
 }
 
 @differentiable(wrt: model)
-func loss(model: AlexNet, in context: Context, images: Tensor<Float>, labels: Tensor<Int32>) -> Tensor<Float> {
-    let logits = model.applied(to: images, in: context)
+func loss(model: AlexNet, images: Tensor<Float>, labels: Tensor<Int32>) -> Tensor<Float> {
+    let logits = model(images)
     let crossEntropyLoss = softmaxCrossEntropy(logits: logits, labels: labels)
     return crossEntropyLoss
 }
 
 func accuracy(model: AlexNet, images: Tensor<Float>, labels: Tensor<Int32>) -> Float {
-    let inferenceContext = Context(learningPhase: .inference)
+    Context.local.learningPhase = .inference
 
-    let results = softmax(model.applied(to: images, in: inferenceContext))
+    let results = softmax(model(images))
     let predictedLabels = results.argmax(squeezingAxis: 1)
     let labelComparison = predictedLabels .== labels
     let matches = labelComparison.scalars.reduce(0.0){ accumulator, value in
