@@ -111,6 +111,7 @@
 				BCA444D4221B678100C440F9 /* Sources */,
 				BCA444D5221B678100C440F9 /* Frameworks */,
 				BCA444D6221B678100C440F9 /* CopyFiles */,
+				BC03167F22B3FAA800B0956F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -152,6 +153,26 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BC03167F22B3FAA800B0956F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "install_name_tool -delete_rpath /usr/lib/swift $TARGET_BUILD_DIR/$PRODUCT_NAME || true\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BCA444D4221B678100C440F9 /* Sources */ = {
