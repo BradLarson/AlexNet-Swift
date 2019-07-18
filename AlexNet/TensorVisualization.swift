@@ -36,7 +36,7 @@ extension Tensor where Scalar == Float {
         let numLayers = Int(self.shape[3])
 //        let sliceByteSize = width * height * 4
         
-        let numberOfLayersAcross = Int(round(sqrt(Double(numLayers))))
+        let numberOfLayersAcross = Int(round(Double.sqrt(Double(numLayers))))
         let numberOfLayersDown = Int(ceil(Double(numLayers) / Double(numberOfLayersAcross)))
         
         let imageWidth = width * numberOfLayersAcross + (numberOfLayersAcross * spaceBetweenLayers)

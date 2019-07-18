@@ -4,19 +4,19 @@ import Foundation
 // Assumes 227x227 input size
 public struct AlexNet: Layer {
     var conv1: Conv2D<Float> // Note: declared as var because of learnable parameters
-    let norm1: LRN
+    @noDerivative let norm1: LRN
     @noDerivative let pool1: MaxPool2D<Float>
     var conv2: Conv2D<Float>
-    let norm2: LRN
+    @noDerivative let norm2: LRN
     @noDerivative let pool2: MaxPool2D<Float>
     var conv3: Conv2D<Float>
     var conv4: Conv2D<Float>
     var conv5: Conv2D<Float>
     @noDerivative let pool5: MaxPool2D<Float>
     var fc6: Dense<Float>
-    let drop6: Dropout<Float>
+    @noDerivative let drop6: Dropout<Float>
     var fc7: Dense<Float>
-    let drop7: Dropout<Float>
+    @noDerivative let drop7: Dropout<Float>
     var fc8: Dense<Float>
     @noDerivative var rng: ARC4RandomNumberGenerator = ARC4RandomNumberGenerator(seed: 120910)
     
@@ -79,7 +79,7 @@ public struct AlexNet: Layer {
     }
 
     @differentiable
-    public func call(_ input: Tensor<Float>) -> Tensor<Float> {
+    public func callAsFunction(_ input: Tensor<Float>) -> Tensor<Float> {
         let conv1Result = conv1(input)
         let norm1Result = norm1(conv1Result)
         let pool1Result = pool1(norm1Result)
