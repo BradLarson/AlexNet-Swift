@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		69E8641922E0F563005FC39B /* libtensorflow_framework.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E8641822E0F563005FC39B /* libtensorflow_framework.so */; };
+		69E8641B22E0F56B005FC39B /* libtensorflow.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E8641A22E0F56B005FC39B /* libtensorflow.so */; };
 		BC0498042220D7D000270889 /* WeightLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0498032220D7D000270889 /* WeightLoading.swift */; };
 		BC04986A2221C4D900270889 /* weights in CopyFiles */ = {isa = PBXBuildFile; fileRef = BC0498692221C4D900270889 /* weights */; };
 		BC04986C2221C4EA00270889 /* images in CopyFiles */ = {isa = PBXBuildFile; fileRef = BC04986B2221C4EA00270889 /* images */; };
@@ -14,8 +16,6 @@
 		BC236339221C6EAB00C20FE4 /* AlexNet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA444E2221B686000C440F9 /* AlexNet.swift */; };
 		BC23633B221CC07200C20FE4 /* LRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23633A221CC07200C20FE4 /* LRN.swift */; };
 		BC910798222366D0005C0D18 /* TensorVisualization.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC910797222366D0005C0D18 /* TensorVisualization.swift */; };
-		BC96251222B3EBB700E50082 /* libtensorflow.so in Frameworks */ = {isa = PBXBuildFile; fileRef = BC96251122B3EBB700E50082 /* libtensorflow.so */; };
-		BC96251422B3EBBF00E50082 /* libtensorflow_framework.so in Frameworks */ = {isa = PBXBuildFile; fileRef = BC96251322B3EBBF00E50082 /* libtensorflow_framework.so */; };
 		BCA444DC221B678100C440F9 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA444DB221B678100C440F9 /* main.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,14 +34,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		69E8641822E0F563005FC39B /* libtensorflow_framework.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow_framework.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-RELEASE-0.4.xctoolchain/usr/lib/swift/macosx/libtensorflow_framework.so"; sourceTree = "<group>"; };
+		69E8641A22E0F56B005FC39B /* libtensorflow.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-RELEASE-0.4.xctoolchain/usr/lib/swift/macosx/libtensorflow.so"; sourceTree = "<group>"; };
 		BC0498032220D7D000270889 /* WeightLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightLoading.swift; sourceTree = "<group>"; };
 		BC0498692221C4D900270889 /* weights */ = {isa = PBXFileReference; lastKnownFileType = folder; path = weights; sourceTree = "<group>"; };
 		BC04986B2221C4EA00270889 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
 		BC0498742221E88E00270889 /* ImageDataset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataset.swift; sourceTree = "<group>"; };
 		BC23633A221CC07200C20FE4 /* LRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRN.swift; sourceTree = "<group>"; };
 		BC910797222366D0005C0D18 /* TensorVisualization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TensorVisualization.swift; sourceTree = "<group>"; };
-		BC96251122B3EBB700E50082 /* libtensorflow.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-RELEASE-0.3.1.xctoolchain/usr/lib/swift/macosx/libtensorflow.so"; sourceTree = "<group>"; };
-		BC96251322B3EBBF00E50082 /* libtensorflow_framework.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtensorflow_framework.so; path = "../../../../Library/Developer/Toolchains/swift-tensorflow-RELEASE-0.3.1.xctoolchain/usr/lib/swift/macosx/libtensorflow_framework.so"; sourceTree = "<group>"; };
 		BCA444D8221B678100C440F9 /* AlexNet-Swift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "AlexNet-Swift"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCA444DB221B678100C440F9 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		BCA444E2221B686000C440F9 /* AlexNet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlexNet.swift; sourceTree = "<group>"; };
@@ -52,8 +52,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC96251222B3EBB700E50082 /* libtensorflow.so in Frameworks */,
-				BC96251422B3EBBF00E50082 /* libtensorflow_framework.so in Frameworks */,
+				69E8641B22E0F56B005FC39B /* libtensorflow.so in Frameworks */,
+				69E8641922E0F563005FC39B /* libtensorflow_framework.so in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,8 +95,8 @@
 		BCA444E4221B68B100C440F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BC96251322B3EBBF00E50082 /* libtensorflow_framework.so */,
-				BC96251122B3EBB700E50082 /* libtensorflow.so */,
+				69E8641822E0F563005FC39B /* libtensorflow_framework.so */,
+				69E8641A22E0F56B005FC39B /* libtensorflow.so */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -223,7 +223,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -242,7 +241,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "/Library/Developer/Toolchains/swift-tensorflow-RELEASE-0.3.1.xctoolchain/usr/lib/swift/macosx";
+				LD_RUNPATH_SEARCH_PATHS = "/Library/Developer/Toolchains/swift-tensorflow-RELEASE-0.4.xctoolchain";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -285,7 +284,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -299,7 +297,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "/Library/Developer/Toolchains/swift-tensorflow-RELEASE-0.3.1.xctoolchain/usr/lib/swift/macosx";
+				LD_RUNPATH_SEARCH_PATHS = "/Library/Developer/Toolchains/swift-tensorflow-RELEASE-0.4.xctoolchain";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

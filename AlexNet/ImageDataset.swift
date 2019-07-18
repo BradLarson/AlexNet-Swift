@@ -9,7 +9,6 @@ struct ImageDataset {
     let classes:Int
     let batchSize:Int
     let labels:[String]
-//    let combinedImageData:TensorPair<Tensor<Float>,Tensor<Int32>>
     let imageData:Tensor<Float>
     let imageLabels:Tensor<Int32>
     let combinedDataset:Dataset<Zip2TensorGroup<Tensor<Float>, Tensor<Int32>>>
