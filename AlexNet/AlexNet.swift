@@ -18,7 +18,6 @@ public struct AlexNet: Layer {
     var fc7: Dense<Float>
     @noDerivative let drop7: Dropout<Float>
     var fc8: Dense<Float>
-    @noDerivative var rng: ARC4RandomNumberGenerator = ARC4RandomNumberGenerator(seed: 120910)
     
 //    @noDerivative let fullyConnectedWidth = 4096
     @noDerivative let fullyConnectedWidth = 256
@@ -64,17 +63,17 @@ public struct AlexNet: Layer {
         // TODO: Find a faster way to initialize these
         // The Gaussian distributions here are crucial to fast convergence and high generalization accuracy
         let fc6Bias = Tensor<Float>(repeating: 0.1, shape: TensorShape(fullyConnectedWidth))
-        let fc6Weight = Tensor<Float>(randomNormal: TensorShape(9216, fullyConnectedWidth), mean: 0.0, stddev: 0.005, generator: &rng)
+        let fc6Weight = Tensor<Float>(randomNormal: TensorShape(9216, fullyConnectedWidth), mean: Tensor<Float>(0.0), standardDeviation: Tensor<Float>(0.005))
         self.fc6 = Dense(weight: fc6Weight, bias: fc6Bias, activation: relu) // 6 * 6 * 256 on input
         self.drop6 = Dropout<Float>(probability: 0.5)
         
         let fc7Bias = Tensor<Float>(repeating: 0.1, shape: TensorShape(fullyConnectedWidth))
-        let fc7Weight = Tensor<Float>(randomNormal: TensorShape(fullyConnectedWidth, fullyConnectedWidth), mean: 0.0, stddev: 0.005, generator: &rng)
+        let fc7Weight = Tensor<Float>(randomNormal: TensorShape(fullyConnectedWidth, fullyConnectedWidth), mean: Tensor<Float>(0.0), standardDeviation: Tensor<Float>(0.005))
         self.fc7 = Dense(weight: fc7Weight, bias: fc7Bias, activation: relu)
         self.drop7 = Dropout<Float>(probability: 0.5)
         
         let fc8Bias = Tensor<Float>(repeating: 0.0, shape: TensorShape(classCount))
-        let fc8Weight = Tensor<Float>(randomNormal: TensorShape(fullyConnectedWidth, classCount), mean: 0.0, stddev: 0.01, generator: &rng)
+        let fc8Weight = Tensor<Float>(randomNormal: TensorShape(fullyConnectedWidth, classCount), mean: Tensor<Float>(0.0), standardDeviation: Tensor<Float>(0.01))
         self.fc8 = Dense(weight: fc8Weight, bias: fc8Bias, activation: { $0 })
     }
 
