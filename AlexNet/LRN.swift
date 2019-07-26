@@ -1,16 +1,13 @@
 import TensorFlow
 
-struct LRN: Layer {
-    typealias Input = Tensor<Float>
-    typealias Output = Tensor<Float>
-    
+public struct LRN: ParameterlessLayer {
     @noDerivative let depthRadius: Int64
     @noDerivative let bias: Double
     @noDerivative let alpha: Double
     @noDerivative let beta: Double
 
     @differentiable
-    func callAsFunction(_ input: Tensor<Float>) -> Tensor<Float> {
+    public func callAsFunction(_ input: Tensor<Float>) -> Tensor<Float> {
         return localResponseNorm(input, depthRadius: depthRadius, bias: bias, alpha: alpha, beta: beta)
     }
 }
